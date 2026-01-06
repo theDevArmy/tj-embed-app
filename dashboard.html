@@ -237,7 +237,7 @@
 
   <script>
     // ⚠️ IMPORTANT: Replace these values with your actual ToolJet information
-    const APP_ID = '9449c0ef-248e-41b8-9462-4bf52b96ea33'; // Replace with your ToolJet App ID
+    const APP_ID = 'YOUR_APP_ID_HERE'; // Replace with your ToolJet App ID
     
     // This will point to your Vercel deployment
     // After deploying, replace with: https://tj-embed-app.vercel.app/api/generate-pat
@@ -250,22 +250,13 @@
     }
 
     async function loadApp() {
-      const hasAccess = localStorage.getItem('hasAccess') === 'true';
-
       // Redirect if not logged in
       if (!userEmail) {
         window.location.href = 'index.html';
         return;
       }
 
-      // Show access denied message if user doesn't have access
-      if (!hasAccess) {
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('accessDenied').style.display = 'block';
-        return;
-      }
-
-      // Generate PAT and load embedded app
+      // Always try to generate PAT - let ToolJet API decide if user has access
       try {
         const response = await fetch(API_ENDPOINT, {
           method: 'POST',
@@ -278,11 +269,18 @@
           })
         });
 
-        if (!response.ok) {
-          throw new Error('Failed to generate access token');
+        const data = await response.json();
+
+        // If API returns 403, user doesn't have access
+        if (response.status === 403) {
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('accessDenied').style.display = 'block';
+          return;
         }
 
-        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to generate access token');
+        }
         
         if (data.embedUrl) {
           // Hide loading, show iframe
