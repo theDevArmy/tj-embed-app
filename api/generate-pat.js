@@ -26,11 +26,15 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Email and appId are required' });
   }
 
-  // Whitelist of allowed emails (only demo user has access)
-  const allowedEmails = ['demo@tooljet.com'];
+  // Whitelist of emails that can use this demo
+  // Both emails are allowed to attempt access
+  // ToolJet API will determine if they actually have permission to the app
+  const allowedEmails = ['demo@tooljet.com', 'noaccess@tooljet.com'];
   
   if (!allowedEmails.includes(email)) {
-    return res.status(403).json({ error: 'This email does not have access to the application' });
+    return res.status(403).json({ 
+      error: 'This email is not registered for the demo' 
+    });
   }
 
   try {
@@ -55,6 +59,14 @@ export default async function handler(req, res) {
     if (!tooljetResponse.ok) {
       const errorData = await tooljetResponse.text();
       console.error('ToolJet API Error:', errorData);
+      
+      // If ToolJet returns 403/404, user doesn't have access to this app
+      if (tooljetResponse.status === 403 || tooljetResponse.status === 404) {
+        return res.status(403).json({ 
+          error: 'User does not have access to this application in ToolJet' 
+        });
+      }
+      
       throw new Error(`ToolJet API returned ${tooljetResponse.status}`);
     }
 
