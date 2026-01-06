@@ -202,12 +202,10 @@
     // Valid demo users
     const VALID_USERS = {
       'demo@tooljet.com': { 
-        password: 'demo123', 
-        hasAccess: true 
+        password: 'demo123'
       },
       'noaccess@tooljet.com': { 
-        password: 'demo123', 
-        hasAccess: false 
+        password: 'demo123'
       }
     };
 
@@ -242,7 +240,6 @@
       
       // Store user session
       localStorage.setItem('userEmail', email);
-      localStorage.setItem('hasAccess', user.hasAccess);
       localStorage.setItem('loginTime', new Date().toISOString());
       
       // Redirect to dashboard
