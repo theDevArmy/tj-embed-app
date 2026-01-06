@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToolJet Embed Demo - Login</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 420px;
+      width: 100%;
+      overflow: hidden;
+    }
+    
+    .header {
+      background: #4F46E5;
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .login-form {
+      padding: 30px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #374151;
+      font-size: 14px;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #E5E7EB;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #4F46E5;
+    }
+    
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #4F46E5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    
+    button:hover {
+      background: #4338CA;
+    }
+    
+    button:disabled {
+      background: #9CA3AF;
+      cursor: not-allowed;
+    }
+    
+    .error {
+      background: #FEE2E2;
+      color: #DC2626;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 14px;
+      display: none;
+    }
+    
+    .error.show {
+      display: block;
+    }
+    
+    .demo-creds {
+      background: #F9FAFB;
+      border: 2px solid #E5E7EB;
+      padding: 20px;
+      margin-top: 25px;
+      border-radius: 8px;
+    }
+    
+    .demo-creds h3 {
+      font-size: 14px;
+      color: #374151;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .cred-box {
+      background: white;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      border-left: 4px solid #10B981;
+    }
+    
+    .cred-box.denied {
+      border-left-color: #EF4444;
+    }
+    
+    .cred-box strong {
+      display: block;
+      margin-bottom: 8px;
+      color: #111827;
+    }
+    
+    .cred-box code {
+      display: block;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: #6B7280;
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🚀 ToolJet Embed Demo</h1>
+      <p>Private Application Embedding Example</p>
+    </div>
+    
+    <div class="login-form">
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="Enter your email" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter your password" required>
+        </div>
+        
+        <button type="submit" id="loginBtn">Sign In</button>
+        
+        <div id="error" class="error"></div>
+      </form>
+      
+      <div class="demo-creds">
+        <h3>📝 Demo Credentials</h3>
+        
+        <div class="cred-box">
+          <strong>✅ User with Access</strong>
+          <code>Email: demo@tooljet.com</code>
+          <code>Password: demo123</code>
+        </div>
+        
+        <div class="cred-box denied">
+          <strong>❌ User without Access</strong>
+          <code>Email: noaccess@tooljet.com</code>
+          <code>Password: demo123</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Valid demo users
+    const VALID_USERS = {
+      'demo@tooljet.com': { 
+        password: 'demo123', 
+        hasAccess: true 
+      },
+      'noaccess@tooljet.com': { 
+        password: 'demo123', 
+        hasAccess: false 
+      }
+    };
+
+    const loginForm = document.getElementById('loginForm');
+    const errorDiv = document.getElementById('error');
+    const loginBtn = document.getElementById('loginBtn');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      
+      // Hide previous errors
+      errorDiv.classList.remove('show');
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Signing in...';
+      
+      // Simulate network delay for realism
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Check credentials
+      const user = VALID_USERS[email];
+      
+      if (!user || user.password !== password) {
+        errorDiv.textContent = '❌ Invalid email or password. Please use the demo credentials provided below.';
+        errorDiv.classList.add('show');
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Sign In';
+        return;
+      }
+      
+      // Store user session
+      localStorage.setItem('userEmail', email);
+      localStorage.setItem('hasAccess', user.hasAccess);
+      localStorage.setItem('loginTime', new Date().toISOString());
+      
+      // Redirect to dashboard
+      window.location.href = 'dashboard.html';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - ToolJet Embed Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #F3F4F6;
+    }
+    
+    .header {
+      background: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 0 30px;
+      height: 64px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .header-left h1 {
+      font-size: 20px;
+      color: #111827;
+    }
+    
+    .user-badge {
+      background: #EEF2FF;
+      color: #4F46E5;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    
+    .logout-btn {
+      background: #EF4444;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    
+    .logout-btn:hover {
+      background: #DC2626;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 30px auto;
+      padding: 0 30px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    
+    .card-header {
+      padding: 20px 25px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    
+    .card-header h2 {
+      font-size: 18px;
+      color: #111827;
+      margin-bottom: 5px;
+    }
+    
+    .card-header p {
+      font-size: 14px;
+      color: #6B7280;
+    }
+    
+    .card-body {
+      padding: 25px;
+    }
+    
+    #loading {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    
+    .spinner {
+      border: 3px solid #E5E7EB;
+      border-top: 3px solid #4F46E5;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    #loading p {
+      color: #6B7280;
+      font-size: 14px;
+    }
+    
+    #accessDenied {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+    }
+    
+    #accessDenied .icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+    
+    #accessDenied h2 {
+      color: #DC2626;
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+    
+    #accessDenied p {
+      color: #6B7280;
+      font-size: 15px;
+      line-height: 1.6;
+      max-width: 500px;
+      margin: 0 auto 10px;
+    }
+    
+    .info-box {
+      background: #FEF3C7;
+      border: 1px solid #FCD34D;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 25px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .info-box strong {
+      color: #92400E;
+    }
+    
+    .back-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #4F46E5;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .back-btn:hover {
+      background: #4338CA;
+    }
+    
+    iframe {
+      width: 100%;
+      height: 800px;
+      border: none;
+      border-radius: 8px;
+    }
+    
+    #errorMessage {
+      display: none;
+      background: #FEE2E2;
+      color: #DC2626;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <h1>🚀 ToolJet Embedded Application</h1>
+      <span class="user-badge" id="userBadge"></span>
+    </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h2>Private Application</h2>
+        <p>This application is embedded using ToolJet's private app embedding feature</p>
+      </div>
+      
+      <div class="card-body">
+        <div id="loading">
+          <div class="spinner"></div>
+          <p>Loading your embedded application...</p>
+        </div>
+        
+        <div id="accessDenied">
+          <div class="icon">🔒</div>
+          <h2>Access Denied</h2>
+          <p>Your account does not have permission to view this application.</p>
+          <p>This demonstrates how ToolJet's private embedding respects user permissions from your host application.</p>
+          
+          <div class="info-box">
+            <strong>💡 What's happening here?</strong><br>
+            Even though you're logged in, the ToolJet API verified that your email doesn't have access to this specific app. This is how you can control which users see which embedded applications.
+          </div>
+          
+          <a href="index.html" class="back-btn">← Back to Login</a>
+        </div>
+        
+        <div id="errorMessage"></div>
+        <div id="appContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ⚠️ IMPORTANT: Replace these values with your actual ToolJet information
+    const APP_ID = 'YOUR_APP_ID_HERE'; // Replace with your ToolJet App ID
+    
+    // This will point to your Vercel deployment
+    // After deploying, replace with: https://tj-embed-app.vercel.app/api/generate-pat
+    const API_ENDPOINT = 'https://tj-embed-app.vercel.app/api/generate-pat';
+
+    // Display user email
+    const userEmail = localStorage.getItem('userEmail');
+    if (userEmail) {
+      document.getElementById('userBadge').textContent = userEmail;
+    }
+
+    async function loadApp() {
+      const hasAccess = localStorage.getItem('hasAccess') === 'true';
+
+      // Redirect if not logged in
+      if (!userEmail) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Show access denied message if user doesn't have access
+      if (!hasAccess) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('accessDenied').style.display = 'block';
+        return;
+      }
+
+      // Generate PAT and load embedded app
+      try {
+        const response = await fetch(API_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: userEmail,
+            appId: APP_ID
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to generate access token');
+        }
+
+        const data = await response.json();
+        
+        if (data.embedUrl) {
+          // Hide loading, show iframe
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('appContainer').innerHTML = `
+            <iframe src="${data.embedUrl}" title="Embedded ToolJet Application"></iframe>
+          `;
+        } else {
+          throw new Error('No embed URL returned');
+        }
+      } catch (error) {
+        console.error('Error loading app:', error);
+        document.getElementById('loading').style.display = 'none';
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.style.display = 'block';
+        errorDiv.innerHTML = `
+          <strong>⚠️ Error Loading Application</strong><br>
+          ${error.message}<br><br>
+          <small>Please check your configuration and try again.</small>
+        `;
+      }
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    }
+
+    // Load the app when page loads
+    loadApp();
+  </script>
+</body>
+</html>
